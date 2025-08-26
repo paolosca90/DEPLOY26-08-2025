@@ -1,6 +1,7 @@
 import { spawn } from "child_process";
 import path from "path";
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
 import { APIError } from "encore.dev/api";
 
 export interface StructuralLevel {
@@ -71,6 +72,10 @@ export interface EnhancedSignalMetadata {
   basisData?: BasisData;
 }
 
+// ES6 module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const PYTHON_SCRIPTS_DIR = path.join(__dirname, "..", "..", "analytics_engine");
 const DATA_LAKE_DIR = path.join(__dirname, "..", "..", "data_lake");
 
@@ -94,8 +99,9 @@ export class StructuralAnalyzer {
       this.isInitialized = true;
       console.log("✅ StructuralAnalyzer inizializzato");
     } catch (error) {
-      console.error("❌ Errore inizializzazione StructuralAnalyzer:", error);
-      throw new APIError(500, "Errore inizializzazione analisi strutturale");
+      console.warn("⚠️ Inizializzazione StructuralAnalyzer con limitazioni:", error);
+      this.isInitialized = true; // Inizializziamo comunque per permettere l'uso dei fallback
+      // Non lanciamo APIError per permettere al sistema di continuare
     }
   }
 
@@ -125,7 +131,9 @@ export class StructuralAnalyzer {
       try {
         await fs.access(scriptPath);
       } catch {
-        throw new Error(`Script Python mancante: ${scriptPath}`);
+        console.warn(`⚠️ Script Python mancante: ${scriptPath} - utilizzando fallback`);
+        // Non lanciamo errore, ma continueremo con i fallback
+        // throw new Error(`Script Python mancante: ${scriptPath}`);
       }
     }
   }
@@ -317,38 +325,68 @@ export class StructuralAnalyzer {
   }
 
   private async runPythonScript(scriptName: string, args: string[]): Promise<{ success: boolean; output: string; error?: string }> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const scriptPath = path.join(PYTHON_SCRIPTS_DIR, scriptName);
-      const pythonProcess = spawn('python', [scriptPath, ...args]);
-
-      let output = '';
-      let error = '';
-
-      pythonProcess.stdout.on('data', (data) => {
-        output += data.toString();
-      });
-
-      pythonProcess.stderr.on('data', (data) => {
-        error += data.toString();
-      });
-
-      pythonProcess.on('close', (code) => {
-        resolve({
-          success: code === 0,
-          output: output.trim(),
-          error: error.trim() || undefined
-        });
-      });
-
-      // Timeout dopo 30 secondi
-      setTimeout(() => {
-        pythonProcess.kill();
+      
+      // Verifica se il file esiste prima di eseguirlo
+      try {
+        await fs.access(scriptPath);
+      } catch {
         resolve({
           success: false,
           output: '',
-          error: 'Python script timeout'
+          error: `Script Python non trovato: ${scriptPath}`
         });
-      }, 30000);
+        return;
+      }
+      
+      try {
+        const pythonProcess = spawn('python', [scriptPath, ...args]);
+
+        let output = '';
+        let error = '';
+
+        pythonProcess.stdout.on('data', (data) => {
+          output += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+          error += data.toString();
+        });
+
+        pythonProcess.on('close', (code) => {
+          resolve({
+            success: code === 0,
+            output: output.trim(),
+            error: error.trim() || undefined
+          });
+        });
+
+        pythonProcess.on('error', (err) => {
+          resolve({
+            success: false,
+            output: '',
+            error: `Python execution error: ${err.message}`
+          });
+        });
+
+        // Timeout dopo 30 secondi
+        setTimeout(() => {
+          pythonProcess.kill();
+          resolve({
+            success: false,
+            output: '',
+            error: 'Python script timeout'
+          });
+        }, 30000);
+        
+      } catch (spawnError) {
+        resolve({
+          success: false,
+          output: '',
+          error: `Cannot spawn Python process: ${spawnError}`
+        });
+      }
     });
   }
 
