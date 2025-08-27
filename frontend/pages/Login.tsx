@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { LogIn, Mail, Lock, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useBackend } from "../hooks/useBackend"; // <-- AGGIUNTO
 
 const loginSchema = z.object({
   email: z.string().email("Email non valida"),
@@ -22,6 +23,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const backend = useBackend(); // <-- AGGIUNTO
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -31,28 +33,19 @@ export default function Login() {
     },
   });
 
+  // 👇 TUTTA QUESTA FUNZIONE 'onSubmit' È STATA SOSTITUITA
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      console.log("Login attempt:", data);
-      
-      // Call mock backend for login
-      const response = await fetch('http://localhost:4000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password
-        })
+      // Usa il client ufficiale Encore invece di fetch
+      const result = await backend.auth.login({
+        email: data.email,
+        password: data.password,
       });
 
-      const result = await response.json();
-      
-      if (result.success) {
+      if (result.success && result.token && result.user) {
         // Store auth token and user data
         localStorage.setItem("auth_token", result.token);
         localStorage.setItem("user_email", result.user.email);
@@ -70,8 +63,13 @@ export default function Login() {
       }
 
     } catch (error: any) {
-      setError("Errore durante il login. Riprova più tardi.");
+      // L'errore ora sarà più specifico
       console.error("Login error:", error);
+      if (error.code === 'unavailable') {
+          setError("Impossibile connettersi al backend. Assicurati che sia in esecuzione su localhost:4000.");
+      } else {
+          setError(error.message || "Errore durante il login. Riprova più tardi.");
+      }
     } finally {
       setIsLoading(false);
     }
