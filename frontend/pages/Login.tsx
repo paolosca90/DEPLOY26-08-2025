@@ -39,10 +39,25 @@ export default function Login() {
     setError(null);
 
     try {
-      // Usa il client ufficiale Encore invece di fetch
+      console.log("🔐 Starting login process for:", data.email);
+      
+      // Validate backend client
+      if (!backend || !backend.auth) {
+        console.error("❌ Backend client not properly initialized");
+        setError("Errore di inizializzazione del sistema. Ricarica la pagina e riprova.");
+        return;
+      }
+
+      // Attempt login with backend
       const result = await backend.auth.login({
         email: data.email,
         password: data.password,
+      });
+
+      console.log("📨 Login response received:", { 
+        success: result.success, 
+        hasToken: !!result.token, 
+        hasUser: !!result.user 
       });
 
       if (result.success && result.token && result.user) {
@@ -51,7 +66,7 @@ export default function Login() {
         localStorage.setItem("user_email", result.user.email);
         localStorage.setItem("user_id", result.user.id.toString());
         
-        console.log("✅ Login successful:", result);
+        console.log("✅ Login successful, storing auth data and redirecting");
         
         // Trigger auth state change
         window.dispatchEvent(new Event('authchange'));
@@ -59,16 +74,23 @@ export default function Login() {
         // Redirect to dashboard directly
         navigate('/dashboard');
       } else {
+        console.log("❌ Login failed:", result.error);
         setError(result.error || "Credenziali non valide. Prova con demo@aiencoretrading.com / demo123");
       }
 
     } catch (error: any) {
-      // L'errore ora sarà più specifico
-      console.error("Login error:", error);
+      console.error("🚨 Login error caught:", error);
+      
+      // Detailed error handling
       if (error.code === 'unavailable') {
-          setError("Impossibile connettersi al backend. Assicurati che sia in esecuzione su localhost:4000.");
+        setError("Impossibile connettersi al backend. Assicurati che sia in esecuzione su localhost:3001.");
+      } else if (error.name === 'TypeError' && error.message.includes('Cannot read properties of undefined')) {
+        console.error("🔍 Debug info - Backend object:", backend);
+        setError("Errore di inizializzazione del client. Il backend potrebbe non essere configurato correttamente.");
+      } else if (error.message && error.message.includes('fetch')) {
+        setError("Problemi di connessione di rete. Controlla la connessione internet e riprova.");
       } else {
-          setError(error.message || "Errore durante il login. Riprova più tardi.");
+        setError(error.message || "Errore durante il login. Riprova più tardi.");
       }
     } finally {
       setIsLoading(false);
