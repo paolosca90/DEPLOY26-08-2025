@@ -216,7 +216,7 @@ export default function Dashboard() {
     },
     { 
       title: "Predizioni", 
-      value: mlAnalytics?.predictionStats.totalPredictions?.toString() || "0", 
+      value: mlAnalytics?.predictionStats?.totalPredictions?.toString() || "0", 
       icon: Zap, 
       description: "Numero totale di predizioni generate"
     },
@@ -255,14 +255,14 @@ export default function Dashboard() {
   ];
 
   // Prepare chart data
-  const performanceChartData = mlAnalytics?.performanceTimeline.map(pt => ({
+  const performanceChartData = mlAnalytics?.performanceTimeline?.map(pt => ({
     date: new Date(pt.date).toLocaleDateString(),
     accuracy: (pt.accuracy * 100).toFixed(1),
     profitLoss: pt.profitLoss.toFixed(0),
     predictions: pt.predictions
   })) || [];
 
-  const featureImportanceData = mlAnalytics?.featureImportance.slice(0, 8).map(f => ({
+  const featureImportanceData = mlAnalytics?.featureImportance?.slice(0, 8)?.map(f => ({
     feature: f.feature,
     importance: (f.importance * 100).toFixed(1),
     type: f.type
