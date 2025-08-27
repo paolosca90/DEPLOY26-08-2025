@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Nav = () => {
   const navItems = [
-    { to: "/", icon: Home, label: "Dashboard" },
+    { to: "/dashboard", icon: Home, label: "Dashboard" },
     { to: "/ml", icon: Brain, label: "ML Analytics", badge: "AI" },
     { to: "/trade", icon: CandlestickChart, label: "Trading" },
     { to: "/news", icon: Newspaper, label: "News" },
