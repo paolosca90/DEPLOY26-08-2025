@@ -36,22 +36,34 @@ export default function Login() {
     setError(null);
 
     try {
-      // TODO: Implement actual login API call
       console.log("Login attempt:", data);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call mock backend for login
+      const response = await fetch('http://localhost:3001/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password
+        })
+      });
+
+      const result = await response.json();
       
-      // Mock successful login - in real implementation, validate with backend
-      if (data.email === "demo@aiencoretrading.com" && data.password === "demo123") {
-        // Store auth token
-        localStorage.setItem("auth_token", "mock_jwt_token");
-        localStorage.setItem("user_email", data.email);
+      if (result.success) {
+        // Store auth token and user data
+        localStorage.setItem("auth_token", result.token);
+        localStorage.setItem("user_email", result.user.email);
+        localStorage.setItem("user_id", result.user.id.toString());
+        
+        console.log("✅ Login successful:", result);
         
         // Redirect to dashboard
         window.location.reload(); // This will trigger app to re-check auth state
       } else {
-        setError("Credenziali non valide. Prova con demo@aiencoretrading.com / demo123");
+        setError(result.error || "Credenziali non valide. Prova con demo@aiencoretrading.com / demo123");
       }
 
     } catch (error: any) {

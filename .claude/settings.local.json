@@ -3,7 +3,11 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(cat:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(encore run)",
+      "Bash(bun run:*)",
+      "Bash(bun install:*)",
+      "Bash(docker:*)"
     ],
     "deny": [],
     "ask": []

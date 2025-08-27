@@ -41,31 +41,59 @@ function App() {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Routes>
-          {/* Public Routes */}
+          {/* Public Routes - Always Accessible */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           
-          {/* Protected Routes */}
+          {/* Protected Routes - Only if authenticated */}
           {isAuthenticated ? (
-            <Route path="/*" element={
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/ml" element={<MLDashboard />} />
-                  <Route path="/trade" element={<Trade />} />
-                  <Route path="/news" element={<News />} />
-                  <Route path="/history" element={<History />} />
-                  <Route path="/guides" element={<Guides />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/billing" element={<Billing />} />
-                </Routes>
-              </Layout>
-            } />
+            <>
+              <Route path="/dashboard" element={
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              } />
+              <Route path="/ml" element={
+                <Layout>
+                  <MLDashboard />
+                </Layout>
+              } />
+              <Route path="/trade" element={
+                <Layout>
+                  <Trade />
+                </Layout>
+              } />
+              <Route path="/news" element={
+                <Layout>
+                  <News />
+                </Layout>
+              } />
+              <Route path="/history" element={
+                <Layout>
+                  <History />
+                </Layout>
+              } />
+              <Route path="/guides" element={
+                <Layout>
+                  <Guides />
+                </Layout>
+              } />
+              <Route path="/settings" element={
+                <Layout>
+                  <Settings />
+                </Layout>
+              } />
+              <Route path="/billing" element={
+                <Layout>
+                  <Billing />
+                </Layout>
+              } />
+            </>
           ) : (
-            // Redirect unauthenticated users to landing page
-            <Route path="/*" element={<LandingPage />} />
+            /* Fallback for unknown routes when not authenticated */
+            <Route path="*" element={<LandingPage />} />
           )}
         </Routes>
         <Toaster />

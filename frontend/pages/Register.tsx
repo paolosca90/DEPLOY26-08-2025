@@ -136,14 +136,38 @@ export default function Register() {
     setIsSubmitting(true);
     
     try {
-      // TODO: Implement registration API call
       console.log("Registration data:", data);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Call mock backend for registration
+      const response = await fetch('http://localhost:3001/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          name: data.firstName,
+          surname: data.lastName,
+          plan: PLAN_DETAILS[data.plan],
+          mt5Data: {
+            login: data.mt5Login,
+            server: data.mt5Server,
+            broker: data.brokerName,
+            type: data.accountType
+          }
+        })
+      });
+
+      const result = await response.json();
       
-      setRegistrationComplete(true);
-      setCurrentStep(4);
+      if (result.success) {
+        setRegistrationComplete(true);
+        setCurrentStep(4);
+        console.log("✅ Registration successful:", result);
+      } else {
+        throw new Error(result.error || 'Registration failed');
+      }
       
     } catch (error) {
       console.error("Registration failed:", error);
@@ -497,9 +521,34 @@ export default function Register() {
           className="bg-green-600 hover:bg-green-700 text-white"
           onClick={async () => {
             try {
-              // In modalità demo, simula il download
+              // Generate installer via mock backend
+              const generateResponse = await fetch('http://localhost:3001/installer/generate', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  userId: 1, // Mock user ID
+                  installerToken: `installer_${Date.now()}`
+                })
+              });
+
+              const generateResult = await generateResponse.json();
+              
+              if (generateResult.success) {
+                // Download installer
+                const downloadUrl = `http://localhost:3001${generateResult.downloadUrl}`;
+                window.open(downloadUrl, '_blank');
+                console.log("✅ Installer download started:", downloadUrl);
+              } else {
+                throw new Error(generateResult.error || 'Installer generation failed');
+              }
+              
+            } catch (error) {
+              console.error("❌ Errore download installer:", error);
+              
+              // Fallback to local mock if backend fails
               const mockResponse = {
-                success: true,
                 content: `@echo off
 REM AI-ENCORE Mock Installer per ${form.getValues("firstName")} ${form.getValues("lastName")}
 REM Email: ${form.getValues("email")}
@@ -534,15 +583,13 @@ pause`,
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = mockResponse.filename || 'AI-ENCORE-Installer.bat';
+              a.download = mockResponse.filename;
               document.body.appendChild(a);
               a.click();
               window.URL.revokeObjectURL(url);
               document.body.removeChild(a);
               
-              console.log("✅ Installer scaricato:", mockResponse.filename);
-            } catch (error) {
-              console.error("❌ Errore download installer:", error);
+              console.log("✅ Installer scaricato (fallback):", mockResponse.filename);
             }
           }}
         >
