@@ -15,6 +15,14 @@ let users = [
     password: 'demo123', // In real app, this would be hashed
     name: 'Demo',
     surname: 'User'
+  },
+  // Fix the existing registered user with correct email
+  {
+    id: 2,
+    email: 'paoloscardia@gmail.com',
+    password: '782789Pao!',
+    name: 'paolo',
+    surname: 'scardia'
   }
 ];
 let registrations = [];
