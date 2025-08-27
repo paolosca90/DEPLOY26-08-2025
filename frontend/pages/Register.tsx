@@ -495,9 +495,55 @@ export default function Register() {
         <Button 
           size="lg" 
           className="bg-green-600 hover:bg-green-700 text-white"
-          onClick={() => {
-            // TODO: Trigger installer download
-            console.log("Download installer");
+          onClick={async () => {
+            try {
+              // In modalità demo, simula il download
+              const mockResponse = {
+                success: true,
+                content: `@echo off
+REM AI-ENCORE Mock Installer per ${form.getValues("firstName")} ${form.getValues("lastName")}
+REM Email: ${form.getValues("email")}
+REM Piano: ${form.getValues("plan")}
+REM Broker: ${form.getValues("brokerName")}
+REM Generated: ${new Date().toLocaleString('it-IT')}
+
+echo.
+echo ╔══════════════════════════════════════════════════════════════╗
+echo ║               🚀 AI-ENCORE INSTALLER PERSONALE 🚀           ║
+echo ╚══════════════════════════════════════════════════════════════╝
+echo.
+echo Ciao ${form.getValues("firstName")}! 👋
+echo.
+echo I tuoi dati preconfigurati:
+echo 📧 Email: ${form.getValues("email")}
+echo 💎 Piano: ${form.getValues("plan").toUpperCase()}
+echo 🏦 Broker: ${form.getValues("brokerName")}
+echo 👤 Login MT5: ${form.getValues("mt5Login")}
+echo 🖥️ Server: ${form.getValues("mt5Server")}
+echo.
+echo ✅ Installer completamente personalizzato!
+echo ✅ Zero configurazione richiesta!
+echo ✅ Pronto per il trading AI!
+echo.
+pause`,
+                filename: `AI-ENCORE-Installer-${form.getValues("firstName")}-${form.getValues("lastName")}.bat`
+              };
+
+              // Crea e scarica il file
+              const blob = new Blob([mockResponse.content], { type: 'text/plain' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = mockResponse.filename || 'AI-ENCORE-Installer.bat';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+              
+              console.log("✅ Installer scaricato:", mockResponse.filename);
+            } catch (error) {
+              console.error("❌ Errore download installer:", error);
+            }
           }}
         >
           <Download className="mr-2 h-5 w-5" />

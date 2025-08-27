@@ -32,8 +32,16 @@ export const generateInstaller = api<GenerateInstallerRequest, GenerateInstaller
   };
 });
 
+// Download installer response interface
+export interface DownloadInstallerResponse {
+  success: boolean;
+  content?: string;
+  filename?: string;
+  error?: string;
+}
+
 // Mock installer download
-export const downloadInstaller = api<{ downloadToken: string }, Response>({
+export const downloadInstaller = api<{ downloadToken: string }, DownloadInstallerResponse>({
   method: "GET",
   path: "/installer/download/:downloadToken",
   expose: true,
@@ -45,17 +53,32 @@ REM AI-ENCORE Mock Installer
 REM Token: ${downloadToken}
 REM Generated: ${new Date().toISOString()}
 
-echo Mock AI-ENCORE Installer
-echo This is a placeholder installer for development
-echo In production, this would be a fully personalized installer
+echo.
+echo ╔══════════════════════════════════════════════════════════════╗
+echo ║               🚀 AI-ENCORE MOCK INSTALLER 🚀                ║
+echo ╚══════════════════════════════════════════════════════════════╝
+echo.
+echo Token: ${downloadToken}
+echo Data: ${new Date().toLocaleString('it-IT')}
+echo.
+echo Questo è un installer di esempio per sviluppo.
+echo In produzione, questo sarà completamente personalizzato.
+echo.
+echo Il tuo installer reale includerà:
+echo ✅ Python e dipendenze automatiche
+echo ✅ MetaTrader 5 configurato
+echo ✅ Credenziali MT5 preimpostate
+echo ✅ API Keys già configurate
+echo ✅ Zero configurazione manuale richiesta
+echo.
+echo 🎯 Installazione completata!
+echo.
 pause
 `;
 
-  return new Response(installerContent, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/octet-stream",
-      "Content-Disposition": `attachment; filename="AI-ENCORE-Mock-Installer.bat"`,
-    },
-  });
+  return {
+    success: true,
+    content: installerContent,
+    filename: "AI-ENCORE-Mock-Installer.bat"
+  };
 });
