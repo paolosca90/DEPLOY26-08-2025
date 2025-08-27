@@ -12,12 +12,13 @@ import MLChart from "../components/charts/MLChart";
 import { Brain, Target, Activity, TrendingUp, Zap, BarChart, Lightbulb, Settings, Play, RefreshCw, Search, CheckCircle, AlertTriangle, Database, LineChart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const availableSymbols = [
-  "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD", "USDJPY", "XAUUSD", "CRUDE", "US500", "NAS100"
-];
+// Import asset di produzione
+import { DASHBOARD_SYMBOLS } from "../config/production-assets";
+
+const availableSymbols = DASHBOARD_SYMBOLS;
 
 export default function MLDashboard() {
-  const [selectedSymbol, setSelectedSymbol] = useState("BTCUSD");
+  const [selectedSymbol, setSelectedSymbol] = useState("EURUSD");
   const [detectedPatterns, setDetectedPatterns] = useState<Array<{
     name: string;
     type: string;

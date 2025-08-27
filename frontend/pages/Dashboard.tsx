@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useBackend } from "../hooks/useBackend";
+import { useAISignals } from "../hooks/useAISignals";
 import StatCard from "../components/cards/StatCard";
 import AutoSignalCard from "../components/cards/AutoSignalCard";
+import EnhancedSignalCard from "../components/cards/EnhancedSignalCard";
 import { DollarSign, Percent, TrendingUp, TrendingDown, Zap, BarChart, Brain, Target, Activity, AlertCircle, Award, Shield, Sparkles, RefreshCw, Clock, Database } from "lucide-react";
 import PositionsTable from "../components/tables/PositionsTable";
 import HistoryTable from "../components/tables/HistoryTable";
@@ -18,6 +20,16 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // Usa i nuovi hook per segnali AI enhanced
+  const { 
+    signals: aiSignals, 
+    summary: aiSummary, 
+    isLoading: isLoadingAISignals, 
+    generateNewSignals, 
+    isGenerating 
+  } = useAISignals();
+
+  // Mantieni le altre query esistenti per compatibilità
   const { data: topSignalsData, isLoading: isLoadingTopSignals, error: topSignalsError, refetch: refetchTopSignals } = useQuery({
     queryKey: ["topSignals"],
     queryFn: () => backend.analysis.getTopSignals(),
@@ -491,6 +503,19 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
             </div>
+          ) : aiSignals.length > 0 ? (
+            aiSignals.map((signal, index) => (
+              <EnhancedSignalCard 
+                key={`${signal.symbol}-${signal.id}-${index}`} 
+                signal={signal}
+                onExecute={(signalId) => {
+                  toast({
+                    title: "🤖 Trade Eseguito",
+                    description: `Segnale ${signal.symbol} (${signal.confidence.toFixed(1)}% confidence) eseguito automaticamente.`
+                  });
+                }}
+              />
+            ))
           ) : (
             topSignalsData.signals.map((signal, index) => (
               <AutoSignalCard key={`${signal.symbol}-${signal.tradeId}-${index}`} signal={signal as any} />
