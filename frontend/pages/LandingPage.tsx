@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, TrendingUp, Zap, Shield, BarChart3, Users, Download, Star } from "lucide-react";
+import { CheckCircle, TrendingUp, Zap, Shield, BarChart3, Users, Download, Star, LogIn } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -112,6 +114,37 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      
+      {/* Header */}
+      <header className="relative z-20 bg-slate-900/50 backdrop-blur-sm border-b border-slate-700/50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">AI</span>
+              </div>
+              <span className="text-white font-bold text-xl">ENCORE Trading</span>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                className="text-gray-300 hover:text-white hover:bg-slate-800"
+                onClick={() => navigate('/login')}
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+              <Button
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold"
+                onClick={() => navigate('/register')}
+              >
+                Inizia Gratis
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
       
       {/* Hero Section */}
       <section className="relative overflow-hidden">
