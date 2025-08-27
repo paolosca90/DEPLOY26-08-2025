@@ -24,9 +24,25 @@ function App() {
 
   useEffect(() => {
     // Check if user is authenticated (check for JWT token)
-    const token = localStorage.getItem("auth_token");
-    setIsAuthenticated(!!token);
+    const checkAuth = () => {
+      const token = localStorage.getItem("auth_token");
+      setIsAuthenticated(!!token);
+    };
+    
+    checkAuth();
     setIsLoading(false);
+    
+    // Listen for storage changes (when login happens in another tab/component)
+    window.addEventListener('storage', checkAuth);
+    
+    // Custom event for same-tab login
+    const handleAuthChange = () => checkAuth();
+    window.addEventListener('authchange', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('authchange', handleAuthChange);
+    };
   }, []);
 
   if (isLoading) {

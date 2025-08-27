@@ -60,8 +60,11 @@ export default function Login() {
         
         console.log("✅ Login successful:", result);
         
-        // Redirect to dashboard
-        window.location.reload(); // This will trigger app to re-check auth state
+        // Trigger auth state change
+        window.dispatchEvent(new Event('authchange'));
+        
+        // Redirect to dashboard directly
+        navigate('/dashboard');
       } else {
         setError(result.error || "Credenziali non valide. Prova con demo@aiencoretrading.com / demo123");
       }

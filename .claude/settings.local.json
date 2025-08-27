@@ -9,7 +9,9 @@
       "Bash(bun install:*)",
       "Bash(docker:*)",
       "Bash(curl:*)",
-      "Bash(bunx vite:*)"
+      "Bash(bunx vite:*)",
+      "Bash(pkill:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []
