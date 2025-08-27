@@ -33,6 +33,9 @@ export interface TradingSignal {
   analysis: any;
   // Nuovi campi per analisi strutturale
   enhancedMetadata?: EnhancedSignalMetadata;
+  // Campi opzionali per supportare componenti esistenti
+  institutionalAnalysis?: any;
+  enhancedConfidence?: any;
 }
 
 export async function generateSignalForSymbol(

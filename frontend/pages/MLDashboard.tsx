@@ -240,7 +240,7 @@ export default function MLDashboard() {
       icon: Brain, 
       description: "Precisione delle predizioni ML",
       progress: mlAnalytics.modelPerformance.accuracy * 100,
-      color: mlAnalytics.modelPerformance.accuracy > 0.8 ? "green" : mlAnalytics.modelPerformance.accuracy > 0.7 ? "yellow" : "red" as const,
+      color: (mlAnalytics.modelPerformance.accuracy > 0.8 ? "green" : mlAnalytics.modelPerformance.accuracy > 0.7 ? "yellow" : "red") as "green" | "yellow" | "red",
       trend: "up" as const
     },
     { 
@@ -265,7 +265,7 @@ export default function MLDashboard() {
       icon: TrendingUp, 
       description: "Rapporto rischio/rendimento",
       badge: mlAnalytics.modelPerformance.sharpeRatio > 1.5 ? "Eccellente" : mlAnalytics.modelPerformance.sharpeRatio > 1 ? "Buono" : "Migliorabile",
-      color: mlAnalytics.modelPerformance.sharpeRatio > 1.5 ? "green" : "default" as const
+      color: (mlAnalytics.modelPerformance.sharpeRatio > 1.5 ? "green" : "default") as "green" | "default"
     },
     { 
       title: "Predizioni Totali", 
@@ -280,7 +280,7 @@ export default function MLDashboard() {
       icon: BarChart, 
       description: "Percentuale di predizioni vincenti",
       progress: mlAnalytics.predictionStats.winRate * 100,
-      color: mlAnalytics.predictionStats.winRate > 0.7 ? "green" : "default" as const
+      color: (mlAnalytics.predictionStats.winRate > 0.7 ? "green" : "default") as "green" | "default"
     },
   ];
 
@@ -817,7 +817,7 @@ export default function MLDashboard() {
                   </CardHeader>
                   <CardContent>
                     <MLChart
-                      data={trainingAnalytics.insights.accuracyBySymbol.map(item => ({
+                      data={trainingAnalytics.insights.accuracyBySymbol.map((item: any) => ({
                         symbol: item.symbol,
                         accuracy: (item.accuracy * 100).toFixed(1),
                         samples: item.sampleSize
@@ -837,7 +837,7 @@ export default function MLDashboard() {
                   </CardHeader>
                   <CardContent>
                     <MLChart
-                      data={trainingAnalytics.insights.confidenceCalibration.map(item => ({
+                      data={trainingAnalytics.insights.confidenceCalibration.map((item: any) => ({
                         range: item.confidenceRange,
                         successRate: (item.actualSuccessRate * 100).toFixed(1),
                         samples: item.sampleSize
@@ -878,7 +878,7 @@ export default function MLDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {trainingAnalytics.insights.marketConditionPerformance.map((item, index) => (
+                    {trainingAnalytics.insights.marketConditionPerformance.map((item: any, index: number) => (
                       <div key={index} className="p-4 bg-muted rounded-lg">
                         <div className="font-semibold mb-2">{item.condition}</div>
                         <div className="space-y-2 text-sm">

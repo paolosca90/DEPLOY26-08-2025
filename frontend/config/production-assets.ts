@@ -67,8 +67,8 @@ export const INVERSE_FUTURES = []; // Per ora tutti sono nella stessa direzione
 export const ALL_PRODUCTION_ASSETS = [
   ...PRODUCTION_ASSETS["💱 Forex Majors"],
   ...PRODUCTION_ASSETS["💱 Forex Cross"], 
-  ...PRODUCTION_ASSETS["📈 Futures"],
-  ...PRODUCTION_ASSETS["🏗️ Metalli Preziosi"]
+  ...PRODUCTION_ASSETS["📈 Indici CFD"],
+  ...PRODUCTION_ASSETS["🏗️ Metalli e Commodities"]
 ];
 
 // Asset per l'analisi istituzionale (SOLO INTERNO - non visibili nel frontend)

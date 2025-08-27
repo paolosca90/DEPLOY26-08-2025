@@ -197,20 +197,20 @@ export default function Dashboard() {
   const mlStats = [
     { 
       title: "ML Accuracy", 
-      value: `${(mlAnalytics?.modelPerformance.accuracy * 100)?.toFixed(1) || 0}%`, 
+      value: `${(mlAnalytics?.modelPerformance?.accuracy ? (mlAnalytics.modelPerformance.accuracy * 100).toFixed(1) : '0')}%`, 
       icon: Brain, 
       description: "Accuratezza del modello ML",
       color: (mlAnalytics?.modelPerformance.accuracy || 0) >= 0.8 ? "text-green-600" : "text-yellow-600"
     },
     { 
       title: "Precision", 
-      value: `${(mlAnalytics?.modelPerformance.precision * 100)?.toFixed(1) || 0}%`, 
+      value: `${(mlAnalytics?.modelPerformance?.precision ? (mlAnalytics.modelPerformance.precision * 100).toFixed(1) : '0')}%`, 
       icon: Target, 
       description: "Precisione delle predizioni"
     },
     { 
       title: "F1 Score", 
-      value: `${(mlAnalytics?.modelPerformance.f1Score * 100)?.toFixed(1) || 0}%`, 
+      value: `${(mlAnalytics?.modelPerformance?.f1Score ? (mlAnalytics.modelPerformance.f1Score * 100).toFixed(1) : '0')}%`, 
       icon: Activity, 
       description: "Bilanciamento precision/recall"
     },

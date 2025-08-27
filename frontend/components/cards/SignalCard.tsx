@@ -194,8 +194,8 @@ const SignalCard: React.FC<SignalCardProps> = ({ signal, onExecute }) => {
                 <div className="flex items-center gap-1">
                   <span className="font-semibold">🏛️ Order Blocks:</span>
                   <span className="font-mono text-xs">
-                    {signal.institutionalAnalysis.orderBlocks.filter(ob => ob.type === 'BULLISH').length}B/
-                    {signal.institutionalAnalysis.orderBlocks.filter(ob => ob.type === 'BEARISH').length}S
+                    {signal.institutionalAnalysis.orderBlocks.filter((ob: any) => ob.type === 'BULLISH').length}B/
+                    {signal.institutionalAnalysis.orderBlocks.filter((ob: any) => ob.type === 'BEARISH').length}S
                   </span>
                 </div>
               )}
@@ -204,7 +204,7 @@ const SignalCard: React.FC<SignalCardProps> = ({ signal, onExecute }) => {
                 <div className="flex items-center gap-1">
                   <span className="font-semibold">⚡ FVG Aperti:</span>
                   <span className="font-mono text-xs text-orange-600">
-                    {signal.institutionalAnalysis.fairValueGaps.filter(fvg => fvg.status === 'OPEN').length}
+                    {signal.institutionalAnalysis.fairValueGaps.filter((fvg: any) => fvg.status === 'OPEN').length}
                   </span>
                 </div>
               )}
@@ -213,7 +213,7 @@ const SignalCard: React.FC<SignalCardProps> = ({ signal, onExecute }) => {
                 <div className="col-span-2 flex items-center gap-1">
                   <span className="font-semibold">🌍 Sessioni:</span>
                   <div className="flex gap-1">
-                    {signal.institutionalAnalysis.activeSessions.map(session => (
+                    {signal.institutionalAnalysis.activeSessions.map((session: any) => (
                       <span key={session.name} className={`px-1 py-0.5 rounded text-xs ${
                         session.volatilityMultiplier >= 1.2 
                           ? 'bg-red-100 text-red-700' 

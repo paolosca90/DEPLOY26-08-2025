@@ -13,14 +13,16 @@ import { ArrowLeft, ArrowRight, CheckCircle, User, CreditCard, Settings, Downloa
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 // Validation schemas for each step
-const personalDataSchema = z.object({
+const basePersonalDataSchema = z.object({
   firstName: z.string().min(2, "Nome deve essere almeno 2 caratteri"),
   lastName: z.string().min(2, "Cognome deve essere almeno 2 caratteri"),
   email: z.string().email("Email non valida"),
   password: z.string().min(8, "Password deve essere almeno 8 caratteri"),
   confirmPassword: z.string(),
   phone: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
+});
+
+const personalDataSchema = basePersonalDataSchema.refine((data) => data.password === data.confirmPassword, {
   message: "Le password non corrispondono",
   path: ["confirmPassword"],
 });
@@ -38,7 +40,10 @@ const mt5DataSchema = z.object({
   // Note: We don't store password in form, it will be entered separately
 });
 
-const completeSchema = personalDataSchema.merge(planSelectionSchema).merge(mt5DataSchema);
+const completeSchema = basePersonalDataSchema.merge(planSelectionSchema).merge(mt5DataSchema).refine((data) => data.password === data.confirmPassword, {
+  message: "Le password non corrispondono",
+  path: ["confirmPassword"],
+});
 
 type FormData = z.infer<typeof completeSchema>;
 
@@ -47,7 +52,14 @@ const POPULAR_BROKERS = [
   "Admiral Markets", "IG", "OANDA", "FP Markets", "Altro"
 ];
 
-const PLAN_DETAILS = {
+type PlanKey = "free-trial" | "professional" | "enterprise";
+
+const PLAN_DETAILS: Record<PlanKey, {
+  name: string;
+  price: number;
+  period: string;
+  features: string[];
+}> = {
   "free-trial": {
     name: "Free Trial",
     price: 0,

@@ -75,7 +75,7 @@ const MLChart: React.FC<MLChartProps> = ({
     <div className="w-full">
       {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
       <ResponsiveContainer width="100%" height={height}>
-        {renderChart()}
+        {renderChart() || <div>No chart available</div>}
       </ResponsiveContainer>
     </div>
   );
